@@ -1,6 +1,6 @@
 # Explore PostgreSQL
 
-### Brilliant Cloud Research Project
+###### Week 1 of Brilliant Cloud Research Project
 
 ## Install and Initial Configuration
 
