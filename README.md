@@ -221,3 +221,48 @@ SELECT is used to get data from a table.
   ```
 
   > More aggregate function is available [here](https://www.postgresql.org/docs/9.5/functions-aggregate.html).
+
+- Arithmatic operations
+
+  ```sql
+  # Lets calculate a shop item price after 15% vat
+  SELECT item, price AS original_price, ROUND(price * 0.15, 2) AS vat, price + ROUND(price * 0.15, 2) AS total_price FROM shop;
+  ```
+
+- Replace missing data
+
+  ```sql
+  # Lets say we want to change every missing age with -1
+  SELECT COALESCE(age, -1) FROM tablename;
+  ```
+
+## Date and Time
+
+- Get current date and time
+
+  ```sql
+  SELECT NOW();         # 2020-08-10 21:16:10.516994+06
+  SELECT NOW()::DATE;   # 2020-08-10
+  SELECT NOW()::TIME;   # 21:17:09.115756
+  ```
+
+- Subtract or add time
+
+  ```sql
+  SELECT NOW() - INTERVAL '2 YEAR 1 MONTH';         # 2018-07-10 21:18:32.667185+06
+  SELECT (NOW() + INTERVAL '2 YEAR 3 MONTH')::DATE; # 2022-11-10
+  ```
+
+- Extract data from date
+
+  ```sql
+  SELECT EXTRACT(YEAR from NOW());    # 2020
+  SELECT EXTRACT(MONTH from NOW());   # 8
+  SELECT EXTRACT(CENTURY from NOW()); # 21
+  ```
+
+- Get age from date of birth
+
+  ```sql
+  SELECT AGE(NOW(), DATE '2000-7-7') AS age; # 20 years 1 mon 3 days 21:26:26.458119
+  ```
