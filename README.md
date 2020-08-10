@@ -46,15 +46,21 @@ psql -U postgres    # Or any other username
 
 Create a database:
 
-````sql
+```sql
 CREATE DATABASE dbname;
-```Delete/Drop a database:
+```
+
+Delete/Drop a database:
+
 ```sql
 DROP DATABASE dbname; # Be careful
-```Connent to a database:
+```
+
+Connent to a database:
+
 ```sql
 \c DBNAME     # \c is also used to connect to any other DB, USER, PORT or HOST
-````
+```
 
 ##### Extra:
 
@@ -244,7 +250,7 @@ We can use all of the logics from SELECT to DELET records from the table like th
 DELETE FROM tablename WHERE col_name='value';
 ```
 
-> Warning: `DELETE FROM tablename` will delete all of the records of from a table.
+> Warning: DELETE command without WHERE will delete entire table.
 
 ## UPDATE table
 
@@ -253,6 +259,8 @@ We can use all of the logics from SELECT to UPDATE records from the table like t
 ```sql
 UPDATE tablename SET col_name='new_value' WHERE id='something';
 ```
+
+> Warning: UPDATE command without WHERE will update entire table with same data.
 
 ## Date and Time
 
@@ -317,3 +325,29 @@ ALTER TABLE person DROP CONSTRAINT constraint_name
 ```
 
 > Full ducumentation on Constraints is available [here](https://www.postgresql.org/docs/9.4/ddl-constraints.html).
+
+## Handle Exceptions
+
+Inserting a record to a table which has a duplicate from a row that has unique constraint will give error. To handle that error we can do:
+
+```sql
+INSERT into tablename (col_name)
+VALUES ('values')
+ON CONFLICT (unique_col)
+DO NOTHING;
+
+# INSERT 0 0
+```
+
+This will ignore the insert command and won't give any error.
+
+To update the table with new data `EXCLUDED.col_name` can be used.
+
+```sql
+INSERT into tablename (col_name)
+VALUES ('values')
+ON CONFLICT (unique_col)
+DO UPDATE SET col_name=EXCLUDED.col_name;
+
+# INSERT 0 1
+```
