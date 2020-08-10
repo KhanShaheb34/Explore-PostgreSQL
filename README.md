@@ -1,6 +1,10 @@
+<p align="center"><a href="https://www.postgresql.org/">
+<img align="center" width="150" src="https://www.postgresql.org/media/img/about/press/elephant.png">
+</a></p>
+
 # Explore PostgreSQL
 
-###### Week 1 of Brilliant Cloud Research Project
+###### Brilliant Cloud Research Project
 
 ## Install and Initial Configuration
 
@@ -61,27 +65,28 @@ psql -U postgres    # Or any other username
 
 ## Tables
 
-- Create a Table
+- Create a table
 
   ```sql
   CREATE TABLE person (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
-  first_name VARCHAR(50) NOT NULL,
-  last_name VARCHAR(50) NOT NULL,
-  gender VARCHAR(8) NOT NULL,
-  email VARCHAR(150),
-  date_of_birth DATE NOT NULL );
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    gender VARCHAR(8) NOT NULL,
+    email VARCHAR(150),
+    date_of_birth DATE NOT NULL
+  );
   ```
 
   > [PostgreSQL Data Type Doc](https://www.postgresql.org/docs/12/datatype.html)
 
-- Drop/Delete a Table
+- Drop/delete a aable
 
   ```sql
   DROP TABLE tablename;
   ```
 
-- Check the Columns of a Table
+- Check the columns of a table
   ```sql
   \d tablename
   ```
@@ -127,26 +132,92 @@ psql -U postgres    # Or any other username
 SELECT is used to get data from a table.
 
 - Get everything
+
   ```sql
   SELECT * FROM tablename;
   ```
+
 - Get particular columns
+
   ```sql
   SELECT col1, col2 FROM tablename;
   ```
+
 - Get data in sorted order
+
   ```sql
   SELECT * FROM tablename ORDER BY col_name [ASC/DESC];
   ```
+
 - Get distinct data
+
   ```sql
   SELECT DISTINCT col_name FROM  tablename;
   ```
+
 - Get data according to condition
+
   ```sql
   SELECT * FROM tablename WHERE col='value';
   ```
+
   Multiple conditions can be apllied using `AND`, `OR`
+
   ```sql
   SELECT * FROM tablename WHERE col1<'value1' AND (col2>='value2' OR col3<>'value3'); # <> is the not equal operator
   ```
+
+- LIMIT and OFFSET
+
+  ```sql
+  SELECT * FROM tablename OFFSET 5 LIMIT 5; # To get row from 6 to 10
+  ```
+
+- FETCH
+
+  ```sql
+  SELECT * FROM tablename OFFSET 5 FETCH FIRST 5 ROW ONLY; # To get row from 6 to 10
+  ```
+
+  FETCH is SQL standard but LIMIT isn't.
+
+- IN and BETWEEN
+
+  ```sql
+  # We can query multiple values for a column like this
+  SELECT * FROM tablename WHERE col_name='value1' OR col_name='value2' OR col_name='value3';
+
+  # Or simply using IN
+  SELECT * FROM tablename WHERE col_name IN ('value1','value2', 'value3');
+
+  # To query values inside a limit
+  SELECT * FROM tablename WHERE col_name BETWEEN 'value1' AND 'value2';
+
+  # Example
+  SELECT * FROM person WHERE date_of_birth BETWEEN DATE '1990-1-1' AND '2010-1-1';
+  ```
+
+- Get data according to a pattern
+
+  ```sql
+  # LIKE and ILIKE is used to find pattern data
+  SELECT * FROM tablename WHERE col_name LIKE 'pattern';
+
+  # Such as, to find emails from gmail.com the command will be:
+  SELECT * FROM person WHERE email LIKE '%gmail.com';
+
+  # ILIKE is same as LIKE but case insensitive
+  ```
+
+  > Postgres Patterns are almost like Regex. [Full Documentation](https://www.postgresql.org/docs/9.3/functions-matching.html).
+
+- Get count of distinct elements in a table
+
+  ```sql
+  SELECT col_name, COUNT(*) FROM tablename GROUP BY col_name;
+
+  # Add logic to group to show
+  SELECT col_name, COUNT(*) FROM tablename GROUP BY col_name HAVING COUNT(*) > 10;
+  ```
+
+  > More aggregate function is available [here](https://www.postgresql.org/docs/9.5/functions-aggregate.html).
