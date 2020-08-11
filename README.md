@@ -6,6 +6,26 @@
 
 ###### Brilliant Cloud Research Project
 
+## Table of Content
+
+- [Install and Initial Configuration](#install-and-initial-configuration)
+- [Databases](#databases)
+- [Tables](#tables)
+- [Add Data](#add-data)
+- [SELECT from table](#select-from-table)
+- [DELETE from table](#delete-from-table)
+- [UPDATE table](#update-table)
+- [Date and Time](#date-and-time)
+- [Primary Key](#primary-key)
+- [Constraints](#constraints)
+- [Handle Exceptions](#handle-exceptions)
+- [Foreign Key](#foreign-key)
+- [Inner Join](#inner-join)
+- [Left Join](#left-join)
+- [Export Query Results to a CSV File](#export-query-results-to-a-csv-file)
+- [Extensions](#extensions)
+- [Credits](#credits)
+
 ## Install and Initial Configuration
 
 I'm using Manjaro, so I installed PostgreSQL using `pacman`
@@ -351,3 +371,124 @@ DO UPDATE SET col_name=EXCLUDED.col_name;
 
 # INSERT 0 1
 ```
+
+## Foreign Key
+
+Foreign keys is used to establish a relationship between two tables. Suppose we have a car table:
+
+| Car   |         |              |
+| ----- | ------- | ------------ |
+| id    | BIGINT  | NOT NULL, PK |
+| model | VARCHAR | NOT NULL     |
+| price | NUMERIC | NOT NULL     |
+
+and a people table
+
+| People     |         |              |
+| ---------- | ------- | ------------ |
+| id         | BIGINT  | NOT NULL, PK |
+| first_name | VARCHAR | NOT NULL     |
+| last_name  | VARCHAR | NOT NULL     |
+
+Let's imagine one person can have atmost car and one car can have only one owner. Then we can add another column to People table that reffer to the records from Car table.
+
+| People     |         |              |
+| ---------- | ------- | ------------ |
+| id         | BIGINT  | NOT NULL, PK |
+| first_name | VARCHAR | NOT NULL     |
+| last_name  | VARCHAR | NOT NULL     |
+| car_id     | BIGINT  |              |
+
+Here, car_id is a foreign key. To generate the People table we have to write this SQL command:
+
+```sql
+CREATE TABLE person (
+  id BIGSERIAL NOT NULL PRIMARY KEY,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  car_id BIGINT REFERENCES car (id),
+  UNIQUE (car_id)
+);
+```
+
+Now we can't assign a car_id to a person which isn't available in tha car table.
+
+## Inner Join
+
+Inner join links two table where primary key and foriegn key is found in both table. It is like intersection(∩).
+
+For example if we inner join the person and car table from the previous example. We'll only get the records from person who has a car_id with all of the information from both table.
+
+To inner join them:
+
+```sql
+SELECT * FROM person
+JOIN car ON person.car_id=car.id;
+```
+
+The foreign key should be provided after ON. And we'll get a table with these columns:
+
+```
+id, first_name, last_name, car_id, id, model, price
+```
+
+If the foreign key and primary key has the same name we can do it like:
+
+```sql
+SELECT * FROM person
+JOIN car using(car_uid)
+```
+
+## Left Join
+
+Left join links the referenced table to the main table. It is like `A + (A ∩ B)` from set.
+
+To left join the person and car table:
+
+```sql
+SELECT * FROM person
+JOIN car ON car.id=person.car_id;
+```
+
+This will also return all of the colums like inner join. But the person records which don't have a car will also be present.
+
+If the foreign key and primary key has the same name we can do it like:
+
+```sql
+SELECT * FROM person
+LEFT JOIN car using(car_uid)
+```
+
+## Export Query Results to a CSV File
+
+We can use `\copy` to export a query results to a file. Such as:
+
+```sql
+\copy (SELECT * FROM tablename) TO '/path/to/csv' DELIMITER ',' CSV HEADER;
+```
+
+## Extensions
+
+We can chech all of the extensions available in PostgreSQL by using:
+
+```sql
+SELECT * FROM pg_available_extensions;
+```
+
+To install an extension:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS "extension-name";
+```
+
+Now we can see available functions by writing `\df`.
+
+---
+
+## Credits
+
+I followed [this video](https://www.youtube.com/watch?v=qw--VYLpxG4) to explore PostgreSQL.
+
+Thanks to **Brilliant Cloud Research** for giving this assignment. 😃
+
+[Table of contents generated with markdown-toc](http://ecotrust-canada.github.io/markdown-toc/).
